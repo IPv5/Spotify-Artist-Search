@@ -1,119 +1,145 @@
 //GLOBAL VAR
+var i = 0
 
-$("#find-music").on("click", function (event) {
+
+//Music search button starts ajax function calls
+$("#findMusicBtn").click(function (event) {
     event.preventDefault();
-    $(".forecast1").empty();
-
-    var i = 0
     var artistName = $("#music-input").val();
+    searchArtistName(artistName);
+});
 
-    //This is DEEZER api call
+$("#nextSongBtn").on("click", function () {
+    getArtistSearchSong();
+    getArtistSearchCover();
+});
+
+//Grabbing the songs by artist name
+function searchArtistName(artistNameSearch) {
     var deezerApi = {
         "async": true,
         "crossDomain": true,
-        "url": "https://deezerdevs-deezer.p.rapidapi.com/search?q=" + artistName,
+        "url": "https://deezerdevs-deezer.p.rapidapi.com/search?q=" + artistNameSearch,
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
             "x-rapidapi-key": "d8bb7331d7mshcb58195d90da480p15ca06jsn0559dad38ac9"
         }
     }
-
     $.ajax(deezerApi).done(function (response) {
-        console.log(response.data[0].title);
+        console.log(response);
+        getArtistSearchSong();
+        getArtistSearchCover();
+        getUrbanDef(artistNameSearch);
 
-        $("#button1").on("click", function (event) {
-            $(".workP").empty();
-            $(".forecast1").empty();
-            i++
-            var work = $("<div>");
-            var workP = $("<p>");
-            workP.text(JSON.stringify(response.data[i]));
+        function getArtistSearchSong() {
+            i++;
             var songName = (response.data[i].title);
-            console.log(songName);
+            var songDiv = $("<div>");
+            var songP = $("<p>");
+            var deezerArtistName = response.data[i].artist.name;
+            $("#deezerArtistName").text(deezerArtistName);
+            $("#deezerArtistSongName").text(songName);
+            // songP.text(JSON.stringify(response.data[i]));
+            // console.log(songName);
 
-            workP.attr("Class", "workP");
-            work.attr('class', 'work');
-            //($(".work")).append(workP);
-            ($(".forecast1")).append(workP);
+            songP.attr("Class", "songP");
+            songDiv.attr('class', 'songDiv');
+            $(".songInfoClass").append(songP);
 
+            //Calling songlyrics function
+            getSongLyrics(songName, artistNameSearch);
+        }
 
-            $.ajax(geniusApi).done(function (response) {
-                console.log(response);
-            });
+        function getArtistSearchCover() {
+            var coverSmall = (response.data[i].album.cover_medium)
+            console.log(coverSmall);
+            $("#songCover").attr("src", coverSmall)
 
-            var settings = {
-                "async": true,
-                "crossDomain": true,
-                "url": "https://mashape-community-urban-dictionary.p.rapidapi.com/define?term=wat",
-                "method": "GET",
-                "headers": {
-                    "x-rapidapi-host": "mashape-community-urban-dictionary.p.rapidapi.com",
-                    "x-rapidapi-key": "7ac5693631msh1be654ee56cba4ap14b22cjsn1aef1fe207ca"
-                }
-            }
-
-            $.ajax(settings).done(function (response) {
-                console.log(response);
-            });
-            var lyricsApi = {
-                "async": true,
-                "crossDomain": true,
-                "url": "https://canarado-lyrics.p.rapidapi.com/lyrics/" + songName + artistName,
-                "method": "GET",
-                "headers": {
-                    "x-rapidapi-host": "canarado-lyrics.p.rapidapi.com",
-                    "x-rapidapi-key": "d8bb7331d7mshcb58195d90da480p15ca06jsn0559dad38ac9"
-                }
-            }
-
-            $.ajax(lyricsApi).done(function (response) {
-                console.log(response);
-
-                function displayArtistInfo() {
-                    var displayArtistName = response.content[0].artist;
-                    var displaySongTitle = response.content[0].title;
-                    $("#artistName").text(displayArtistName);
-                    $("#artistSongName").text(displaySongTitle);
-                }
-                displayArtistInfo();
-
-                function displaySongLyrics() {
-                    var songLyrics = response.content[0].lyrics;
-                    $("#lyricsP").text(songLyrics);
-                }
-                displaySongLyrics();
+        }
 
 
+    });
 
-            });
-
-        });
-
-        var searchEntry = "";
-        var urbanAPI = {
+    function getUrbanDef(artistNameSearch) {
+        var urbanApi = {
             "async": true,
             "crossDomain": true,
-            "url": "https://mashape-community-urban-dictionary.p.rapidapi.com/define?term=" + searchEntry,
+            "url": "https://mashape-community-urban-dictionary.p.rapidapi.com/define?term=" + artistNameSearch,
             "method": "GET",
             "headers": {
                 "x-rapidapi-host": "mashape-community-urban-dictionary.p.rapidapi.com",
                 "x-rapidapi-key": "7ac5693631msh1be654ee56cba4ap14b22cjsn1aef1fe207ca"
             }
         }
-
-        $.ajax(urbanAPI).done(function (response) {
-
+        $.ajax(urbanApi).done(function (response) {
             console.log(response);
 
-            for (var i = 0; i < searchEntry.length; i++) {
+            i++;
+            var artistSearch = (response.list[0].definition);
+            $("#urbanDefinition").text(artistSearch);
 
-                var searchTest = $("<text>")
-                searchTest.text("");
-                searchTest.text(JSON.stringify(response.searchEntry[i]));
-            }
-
+            //Calling songlyrics function
+            getSongLyrics(artistSearch);
         });
 
+
+
+    }
+
+};
+
+//Calls lyrics api
+function getSongLyrics(songName, artistNameSearch) {
+
+
+    var lyricsApi = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://canarado-lyrics.p.rapidapi.com/lyrics/" + songName + artistNameSearch,
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "canarado-lyrics.p.rapidapi.com",
+            "x-rapidapi-key": "d8bb7331d7mshcb58195d90da480p15ca06jsn0559dad38ac9"
+        }
+    }
+    $.ajax(lyricsApi).done(function (response) {
+        // console.log(response);
+        displayArtistInfo();
+        displaySongLyrics();
+
+        function displayArtistInfo() {
+            var displayArtistName = response.content[0].artist;
+            var displaySongTitle = response.content[0].title;
+            $("#artistName").text(displayArtistName);
+            $("#artistSongName").text(displaySongTitle);
+        }
+
+        function displaySongLyrics() {
+            var songLyrics = response.content[0].lyrics;
+            $("#lyricsP").text(songLyrics);
+
+        }
+
     });
-});
+}
+
+function renderButton() {
+
+    $("#nextSongBtn").empty();
+    for (let i = 0; i < artistName.length; i++) {
+
+        const listItem = $("<li>").addClass("current-artist list-group-item list-group-item-action").attr("data", artistName[i]).text(artistName[i]);
+        $("#nextSongBtn").append(listItem);
+    }
+};
+
+$(document).on("click", "current-artist", function () {
+
+
+    const artistNameSearch = ($(this).attr("data"));
+
+    searchArtistName(artistNameSearch);
+
+
+})

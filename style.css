@@ -1,0 +1,26 @@
+body { 
+    background-image: url("image/jack_white_h.jpg");
+    background-size: 1000px;
+  }
+
+
+
+
+  #music-form {
+    border: 2px solid white;
+    background-color: white;
+    border-radius: 8px;
+    margin-top: 60%;
+    opacity: .8;
+    margin-bottom: 20px;
+  }
+  #music-form::after{
+    opacity: .8;
+  }
+
+
+#lyricsID {
+  background-color: grey;
+  opacity: .7;
+
+}
