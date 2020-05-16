@@ -20,7 +20,7 @@ body {
 
 #lyricsID {
   position: relative;
-  top: 3%;
+  top: 8%;
   background-color: grey;
   opacity: .7;
 
@@ -102,5 +102,19 @@ form:hover .fa{
   border-radius: 10%;
 }
 
+#urbanDefinition{
+  position: relative;
+  top: 100px;
+  background-color: grey;
+  opacity: .8;
+  
+}
 
+#deezerArtistName{
+  color: blue;
+}
+
+#deezerArtistSongName{
+  color: blue;
+}
 
